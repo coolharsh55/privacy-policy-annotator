@@ -124,12 +124,21 @@ $(document).ready(function() {
         var selection= window.getSelection().getRangeAt(0);
         var selectedText = selection.extractContents();
         var span = document.createElement("span");
-        span.className = $(this).text().split(' ').join('-');
+        span.className = "annotation-item " + $(this).text().split(' ').join('-');
         // span.style.backgroundColor = "yellow";
         span.appendChild(selectedText);
         selection.insertNode(span);
+        clearSelection();
     });
 });
+
+function clearSelection() {
+    if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    } else if (document.selection) {
+        document.selection.empty();
+    }
+}
 
 // NOTES:
 // show a floating menu containing the different classes, just like the dashboard

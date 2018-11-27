@@ -1,3 +1,4 @@
 readability-lxml
 requests
 bottle
+gunicorn

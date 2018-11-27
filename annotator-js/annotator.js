@@ -17,9 +17,8 @@
 //     return t;
 // }
 
-$(document).ready(function() {
-    {
-        let  stylesheet = "\
+var render_toolbar = function() {
+    let  stylesheet = "\
             .toolbar-item {\
                 padding: 5px; margin: 5px; border: 1px solid black; font-size: 0.75em; display: block; width: 100px;\
             }\
@@ -61,7 +60,8 @@ $(document).ready(function() {
             }\
             .data-retention {\
                 background-color: rgba(50,50,225,0.4);\
-            }";
+            }\
+            .body { width: 1024px; margin: auto; }";
         var style=document.createElement('style');
         style.type='text/css';
         if(style.styleSheet){
@@ -91,15 +91,31 @@ $(document).ready(function() {
         </div>\
         ';
         $('body').append(toolbar);
+        $('.toolbar-item').on('click', function() {
+            console.log($(this).text());
+            var selection= window.getSelection().getRangeAt(0);
+            var selectedText = selection.extractContents();
+            var span = document.createElement("span");
+            span.className = "annotation-item " + $(this).text().split(' ').join('-');
+            // span.style.backgroundColor = "yellow";
+            span.appendChild(selectedText);
+            selection.insertNode(span);
+            clearSelection();
+        });
+}
+
+$(document).ready(function() {
+    {
 
         $.ajax({
             type: "GET",
-            url: "http://policy-annotator.herokuapp.com/extract",
-            data: {url: "https://www.bmw.com/en/footer/legal-disclaimer.html"},
+            // url: "https://policy-annotator.herokuapp.com/extract?url=https://www.bmw.com/en/footer/legal-disclaimer.html",
+            url: "http://localhost:5000/extract?url=https://www.bmw.com/en/footer/legal-disclaimer.html",
             dataType: "json",
             crossDomain: true,
             success: function(data) {
-                console.log(data);
+                $('body').html(data);
+                render_toolbar();
             },
             error: function(a, status, error) {
                 console.log('error:' + error);
@@ -135,18 +151,6 @@ $(document).ready(function() {
     //         }
     //     }
     // });
-
-    $('.toolbar-item').on('click', function() {
-        console.log($(this).text());
-        var selection= window.getSelection().getRangeAt(0);
-        var selectedText = selection.extractContents();
-        var span = document.createElement("span");
-        span.className = "annotation-item " + $(this).text().split(' ').join('-');
-        // span.style.backgroundColor = "yellow";
-        span.appendChild(selectedText);
-        selection.insertNode(span);
-        clearSelection();
-    });
 });
 
 function clearSelection() {

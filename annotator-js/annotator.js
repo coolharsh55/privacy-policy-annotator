@@ -92,6 +92,23 @@ $(document).ready(function() {
         ';
         $('body').append(toolbar);
 
+        $.ajax({
+            type: "GET",
+            url: "http://policy-annotator.herokuapp.com/extract",
+            data: {url: "https://www.bmw.com/en/footer/legal-disclaimer.html"},
+            dataType: "json",
+            crossDomain: true,
+            success: function(data) {
+                console.log(data);
+            },
+            error: function(a, status, error) {
+                console.log('error:' + error);
+            },
+            complete: function() {
+                console.log('complete');
+            }
+        });
+
     }
 
     // $(document).bind("mouseup", function() {

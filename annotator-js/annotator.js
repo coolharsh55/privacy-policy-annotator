@@ -61,6 +61,7 @@ var render_toolbar = function() {
             .data-retention {\
                 background-color: rgba(50,50,225,0.4);\
             }\
+            #btn-download { border: 2px solid #C99; padding: 5px; margin: 5px; border: 1px solid black; font-size: 0.75em; display: block; width: 100px; }\
             .body { width: 1024px; margin: auto; }";
         var style=document.createElement('style');
         style.type='text/css';
@@ -88,6 +89,7 @@ var render_toolbar = function() {
             <button class="toolbar-item automated">automated</button>\
             <button class="toolbar-item location">location</button>\
             <button class="toolbar-item data-retention">data retention</button>\
+            <button id="btn-download" class="btn-download-item">download</button>\
         </div>\
         ';
         $('body').append(toolbar);
@@ -102,15 +104,26 @@ var render_toolbar = function() {
             selection.insertNode(span);
             clearSelection();
         });
+        $('#btn-download').on('click', function() {
+            let doc = "html" + $("html").html() + "</html>";
+            var dl = document.createElement('a');
+            dl.setAttribute('href', 'data:text/htl;charset=utf-8,' + encodeURIComponent(doc));
+            dl.setAttribute('download', 'policy.html');
+            document.body.appendChild(dl);
+            dl.click();
+        });
 }
 
-$(document).ready(function() {
+$(document).ready(function() 
     {
 
+
+        // NOTE: change the url --> this is the url of the original policy
+        let URL = "https://www.bmw.com/en/footer/legal-disclaimer.html";
         $.ajax({
             type: "GET",
-            // url: "https://policy-annotator.herokuapp.com/extract?url=https://www.bmw.com/en/footer/legal-disclaimer.html",
-            url: "http://localhost:5000/extract?url=https://www.bmw.com/en/footer/legal-disclaimer.html",
+            url: "https://policy-annotator.herokuapp.com/extract?url=" + URL,
+            // url: "http://localhost:5000/extract?url=https://www.bmw.com/en/footer/legal-disclaimer.html",
             dataType: "json",
             crossDomain: true,
             success: function(data) {
@@ -121,37 +134,11 @@ $(document).ready(function() {
                 console.log('error:' + error);
             },
             complete: function() {
-                console.log('complete');
             }
         });
 
-    }
+    });
 
-    // $(document).bind("mouseup", function() {
-    //     var selectedText = x.Selector.getSelected();
-    // });
-    // $(document).on("mousedown", function(e){
-    //     pageX = e.pageX;
-    //     pageY = e.pageY;
-    // });
-    // $('div.tools>span').on('click', function() {
-    //     console.log(window.clip.rangeCount, window.clip.toString());
-    //     if (window.clip.toString().length > 0) {
-    //         var span = document.createElement("span");
-    //         span.style.color = "red";
-    //         console.log(window.clip.rangeCount);
-    //         var selection = window.clip;
-    //         console.log("range:" + window.clip.rangeCount)
-    //         if (selection.rangeCount) {
-    //             console.log("do");
-    //             var range = selection.getRangeAt(0).cloneRange();
-    //             range.surroundContents(span);
-    //             selection.removeAllRanges();
-    //             selection.addRange(range);
-    //         }
-    //     }
-    // });
-});
 
 function clearSelection() {
     if (window.getSelection) {
@@ -160,8 +147,3 @@ function clearSelection() {
         document.selection.empty();
     }
 }
-
-// NOTES:
-// show a floating menu containing the different classes, just like the dashboard
-// these are buttons
-// on clicking the button, the selected text is annotated with the specific class
